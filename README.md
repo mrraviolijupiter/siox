@@ -4,7 +4,7 @@
 
 ```
 npm install
-npm start
+node server.js
 ```
 
 # Run client
