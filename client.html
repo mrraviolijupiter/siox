@@ -1,0 +1,112 @@
+<!doctype html>
+<html>
+	<head>
+		<title>Socket.IO chat</title>
+	</head>
+	<style media="screen">
+		:root {
+			--foreground: white;
+			--background: #263238;
+			--highlight: #FFA000;
+			--highlight-deep: #FF6F00;
+		}
+
+		body {
+			display: flex;
+			flex-flow: row nowrap;
+			color: var(--foreground);
+			background-color: var(--background);
+			font-family: monospace;
+		}
+
+		div {
+			flex: 10;
+			display: flex;
+			flex-flow: column;
+			border: 2px solid white;
+			border-radius: 10px;
+			padding: 1rem;
+			margin: 0.5rem;
+		}
+
+
+		div li {
+			margin: 0 0.5rem;
+		}
+
+		textarea {
+			height: calc(100vh - 20rem);
+		}
+
+		#inputContainer {
+			flex: 0;
+		}
+
+		.button {
+			height: 2.5rem;
+			background-color: var(--highlight-deep);
+			cursor: pointer;
+			border: 0;
+			font-family: monospace;
+			font-weight: bold;
+			font-size: 1.5rem;
+			color: var(--foreground);
+			border-radius: 5px;
+			margin-top: 0.5rem;
+		}
+
+		#next {
+			background-color: var(--highlight);
+		}
+
+	</style>
+	<body>
+		<div id="inputContainer">
+			<input id="event" placeholder="event" /> <br>
+			<textarea id="payload" placeholder="payload"></textarea> <br>
+			<button class="button" onclick="send()">Send</button>
+			<button id="next" class="button" onclick="nextCommand()">Next</button>
+		</div>
+		<div id="sentContainer">
+			<h1>Sent</h1>
+			<ol id="sent"></ol>
+		</div>
+		<div id="receivedContainer">
+			<h1>Received</h1>
+			<ol id="received"></ol>
+		</div>
+	</body>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.1.1/socket.io.js"></script>
+	<script>
+	const socket = io("http://127.0.0.1:1337/");
+	const onevent = socket.onevent;
+	socket.onevent = function(packet) {
+		onevent.call(this, packet);
+		console.log("Packet received:", packet);
+		addToReceived(packet.data[0], packet.data[1]);
+	}
+
+	function send() {
+		const event = document.querySelector("#event").value;
+		const payload = document.querySelector("#payload").value;
+		console.log("Message sent:", `event: ${event}\npayload:${payload}`);
+		addToSent(event, payload);
+		socket.emit(event, payload);
+	}
+
+	function nextCommand() {
+		socket.emit("next_command", "");
+	}
+
+	const addToSent = (e, p) => addTo("#sentContainer", e, p);
+	const addToReceived = (e, p) => addTo("#receivedContainer", e, p);
+	function addTo(containerId, event, payload) {
+		const messages = document.querySelector(containerId);
+		let li = document.createElement("li");
+		li.innerHTML = `event: ${event}<br>payload: ${payload}`;
+		messages.append(li);
+		window.scrollTo(0, document.body.scrollHeight);
+	}
+
+	</script>
+</html>
