@@ -6,17 +6,17 @@ const port = 1337;
 const clients = [];
 
 // Start the server
-http.listen(port, function(){
+http.listen(port, () => {
   console.log('listening on *:' + port);
 });
 
 // Serve web client
-app.get('/', function(req, res){
+app.get('/', (req, res) => {
   res.sendFile(__dirname + '/client.html');
 });
 
 // When a client connects, bind each desired event to the client socket
-io.on('connection', function(socket){
+io.on('connection', socket => {
 	//track connected clients via log
 	clients.push(socket.id);
   const clientConnectedMsg = `User connected with socket.id=${socket.id}, total: ${clients.length}`;
@@ -30,7 +30,7 @@ io.on('connection', function(socket){
   });
 
 	// track disconnected clients via log
-	socket.on('disconnect', function(){
+	socket.on('disconnect', () => {
 		clients.pop(socket.id);
     const clientDisconnectedMsg = `User disconnected with socket.id=${socket.id}, total: ${clients.length}`;
 		io.emit('server_info', clientDisconnectedMsg);
@@ -39,9 +39,10 @@ io.on('connection', function(socket){
 
 	// special event to make the server give its next message
   // modify this for custom responses
-	socket.on('next_command', function(msg){
+	socket.on('next_command', (msg, callback) => {
     const next = { a: { a: { a: 1 } }, b: 2 };
-		io.emit('next_command', JSON.stringify(next, null, "  "));
-    console.log("NEXT SENT: ", JSON.stringify(next, null, "  "));
+		io.emit('next_command', next);
+    console.log("NEXT SENT: ", next);
+    if (callback instanceof Function) callback(next);
 	});
 });
