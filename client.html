@@ -38,8 +38,15 @@
 			height: calc(100vh - 20rem);
 		}
 
-		#inputContainer {
+		.inputContainer {
 			flex: 0;
+		}
+		.text{
+			background-color: #cccccc;
+			font-family: monospace;
+			font-size: 1rem;
+			color: #333333;
+			border-radius: 5px;
 		}
 
 		.button {
@@ -61,21 +68,28 @@
 
 	</style>
 	<body>
-		<div id="inputContainer">
-			<input id="event" placeholder="event" /> <br>
-			<textarea id="payload" placeholder="payload"></textarea> <br>
+		<div class="inputContainer">
+			<input id="event" class="text" placeholder="event" /> <br>
+			<textarea id="payload" class="text" placeholder="payload"></textarea> <br>
 			<button class="button" onclick="send()">Send</button>
 			<button id="next" class="button" onclick="nextCommand()">Next</button>
-			<input id="userid" placeholder="userid" /> <br>
+		</div>
+		<div>
+			<div id="sentContainer">
+				<h1>Sent</h1>
+				<ol id="sent"></ol>
+			</div>
+			<div id="receivedContainer">
+				<h1>Received</h1>
+				<ol id="received"></ol>
+			</div>
+		</div>
+		<div class="inputContainer">
+			<p>User ID</p>
+			<input id="userid" class="text" value="2" placeholder="userid" />
+			<p>Setup</p>
+			<input id="setup" class="text" value="1" placeholder="setup" /> <br>
 			<button id="connect" class="button" onclick="connect()">Connect</button>
-		</div>
-		<div id="sentContainer">
-			<h1>Sent</h1>
-			<ol id="sent"></ol>
-		</div>
-		<div id="receivedContainer">
-			<h1>Received</h1>
-			<ol id="received"></ol>
 		</div>
 
 	</body>
@@ -84,8 +98,9 @@
 		let socket;
 		function connect() {
 			const userId = document.querySelector("#userid").value;
+			const setup = document.querySelector("#setup").value;
 			socket = io("http://localhost:1337",{
-				query: `force-user=${userId}`,
+				query: `force-user=${userId}&setup=${setup}`,
 				transports: ['websocket'],
 			});
 			const onevent = socket.onevent;
