@@ -66,6 +66,8 @@
 			<textarea id="payload" placeholder="payload"></textarea> <br>
 			<button class="button" onclick="send()">Send</button>
 			<button id="next" class="button" onclick="nextCommand()">Next</button>
+			<input id="userid" placeholder="userid" /> <br>
+			<button id="connect" class="button" onclick="connect()">Connect</button>
 		</div>
 		<div id="sentContainer">
 			<h1>Sent</h1>
@@ -75,38 +77,46 @@
 			<h1>Received</h1>
 			<ol id="received"></ol>
 		</div>
+
 	</body>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.1.1/socket.io.js"></script>
 	<script>
-	const socket = io("http://127.0.0.1:1337/");
-	const onevent = socket.onevent;
-	socket.onevent = function(packet) {
-		onevent.call(this, packet);
-		console.log("Packet received:", packet);
-		addToReceived(packet.data[0], packet.data[1]);
-	}
+		let socket;
+		function connect() {
+			const userId = document.querySelector("#userid").value;
+			socket = io("http://localhost:1337",{
+				query: `force-user=${userId}`,
+				transports: ['websocket'],
+			});
+			const onevent = socket.onevent;
+			socket.onevent = function(packet) {
+				onevent.call(this, packet);
+				console.log("Packet received:", packet);
+				addToReceived(packet.data[0], packet.data[1]);
+			};
+		}
 
-	function send() {
-		const event = document.querySelector("#event").value;
-		const payload = document.querySelector("#payload").value;
-		console.log("Message sent:", `event: ${event}\npayload:${payload}`);
-		addToSent(event, payload);
-		socket.emit(event, payload);
-	}
+		function send() {
+			const event = document.querySelector("#event").value;
+			const payload = document.querySelector("#payload").value;
+			console.log("Message sent:", `event: ${event}\npayload:${payload}`);
+			addToSent(event, payload);
+			socket.emit(event, payload);
+		}
 
-	function nextCommand() {
-		socket.emit("next_command", "");
-	}
+		function nextCommand() {
+			socket.emit("next_command", "");
+		}
 
-	const addToSent = (e, p) => addTo("#sentContainer", e, p);
-	const addToReceived = (e, p) => addTo("#receivedContainer", e, p);
-	function addTo(containerId, event, payload) {
-		const messages = document.querySelector(containerId);
-		let li = document.createElement("li");
-		li.innerHTML = `event: ${event}<br>payload: ${payload}`;
-		messages.append(li);
-		window.scrollTo(0, document.body.scrollHeight);
-	}
+		const addToSent = (e, p) => addTo("#sentContainer", e, p);
+		const addToReceived = (e, p) => addTo("#receivedContainer", e, p);
+		function addTo(containerId, event, payload) {
+			const messages = document.querySelector(containerId);
+			let li = document.createElement("li");
+			li.innerHTML = `event: ${event}<br>payload: ${JSON.stringify(payload)}`;
+			messages.append(li);
+			window.scrollTo(0, document.body.scrollHeight);
+		}
 
 	</script>
 </html>
