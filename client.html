@@ -125,12 +125,31 @@
 
 		const addToSent = (e, p) => addTo("#sentContainer", e, p);
 		const addToReceived = (e, p) => addTo("#receivedContainer", e, p);
+		let lastPayloadId = 0;
 		function addTo(containerId, event, payload) {
+			lastPayloadId++;
 			const messages = document.querySelector(containerId);
 			let li = document.createElement("li");
-			li.innerHTML = `event: ${event}<br>payload: ${JSON.stringify(payload)}`;
+			li.innerHTML = `event: ${event}
+				<a
+					style="cursor: pointer; background-color: deeppink"
+					onclick="togglePayload('payload${lastPayloadId}')"
+				>
+					DETAIL
+				</a>
+				<textarea
+					readonly
+					id="payload${lastPayloadId}"
+					style="display: none; width: 50rem; background-color: black; color: white"
+				>${JSON.stringify(payload, null, "  ")}</textarea>
+			`;
 			messages.append(li);
 			window.scrollTo(0, document.body.scrollHeight);
+		}
+
+		function togglePayload(payloadId) {
+			const li = document.querySelector(`#${payloadId}`);
+			li.style.display = li.style.display == "none" ? "inherit" : "none";
 		}
 
 	</script>
