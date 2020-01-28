@@ -1,6 +1,6 @@
 const app = require('express')();
 const http = require('http').Server(app);
-const io = require('socket.io')(http);
+global.io = require('socket.io')(http);
 const util = require('util');
 const port = 1337;
 const clients = [];
@@ -14,6 +14,10 @@ http.listen(port, () => {
 app.get('/', (req, res) => {
   res.sendFile(__dirname + '/client.html');
 });
+
+const ForceMessages = {
+  MapInfo: require("./ForceMessage/MapInfo"),
+};
 
 // When a client connects, bind each desired event to the client socket
 io.on('connection', socket => {
@@ -45,4 +49,7 @@ io.on('connection', socket => {
     console.log("NEXT SENT: ", next);
     if (callback instanceof Function) callback(next);
 	});
+
+  for (let forceMessage of Object.values(ForceMessages))
+    socket.on(`force_${forceMessage.event}`, forceMessage.emit);
 });
