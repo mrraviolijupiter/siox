@@ -17,6 +17,7 @@ app.get('/', (req, res) => {
 
 const ForceMessages = {
   MapInfo: require("./ForceMessage/MapInfo"),
+  Join: require("./ForceMessage/Join"),
 };
 
 // When a client connects, bind each desired event to the client socket
