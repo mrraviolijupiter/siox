@@ -87,8 +87,8 @@
 		<div class="inputContainer">
 			<p>User ID</p>
 			<input id="userid" class="text" value="2" placeholder="userid" />
-			<p>Setup</p>
-			<input id="setup" class="text" value="1" placeholder="setup" /> <br>
+			<p>Item</p>
+			<input id="item" class="text" value="1" placeholder="item" /> <br>
 			<button id="connect" class="button" onclick="connect()">Connect</button>
 		</div>
 
@@ -98,9 +98,9 @@
 		let socket;
 		function connect() {
 			const userId = document.querySelector("#userid").value;
-			const setup = document.querySelector("#setup").value;
+			const item = document.querySelector("#item").value;
 			socket = io("http://localhost:1337",{
-				query: `force-user=${userId}&setup=${setup}`,
+				query: `force-user=${userId}&item=${item}`,
 				transports: ['websocket'],
 			});
 			const onevent = socket.onevent;
