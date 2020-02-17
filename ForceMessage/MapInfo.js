@@ -1,5 +1,6 @@
 const messages = [
   {
+    turnOrder: [2, 3, 1],
     turn: {
       startReason: "pass",
       remainingSeconds: 10.3,
@@ -81,9 +82,45 @@ const messages = [
           turnCharge: 100
         }
       },
+      {
+        id: 3,
+        name: "Greenish3",
+        pawn: {
+          location: { x: 1, y: 8 },
+          front: "S",
+          currentStats: {
+            health: 30,
+            damage: 4,
+            movementSteps: 2,
+            jumpHeight: 2,
+            attackRange: [{ x: 0, y: 3 }, { x: 0, y: 2 }, { x: 1, y: 2 }],
+            evasionRate:  0.3,
+            criticalRate: 0.27,
+            criticalMultiplier: 1.6,
+            turnInitiative: 2,
+            turnSpeed: 30,
+            turnCharge: 50
+          }
+        },
+        color: 3,
+        baseStats: {
+          health: 30,
+          damage: 4,
+          movementSteps: 2,
+          jumpHeight: 2,
+          attackRange: [{ x: 0, y: 3 }, { x: 0, y: 2 }, { x: 1, y: 2 }],
+          evasionRate:  0.3,
+          criticalRate: 0.27,
+          criticalMultiplier: 1.6,
+          turnInitiative: 2,
+          turnSpeed: 30,
+          turnCharge: 100
+        }
+      },
     ]
   },
   {
+    turnOrder: [3, 1],
     turn: {
       startReason: "timeout",
       remainingSeconds: 30.8,
